@@ -38,17 +38,19 @@
             <!--<arg name="serial_baudrate" value="525000"/>-->
         </include>
 
-        <include file="$(find rosbot_ekf)/launch/message_conversion.launch"/>
+        <include file="$(find rosbot_ekf)/launch/message_conversion.launch">
+            <param name="tf_prefix" value="$(arg robot_namespace)" />
+        </include>
 
         <!--<include file="$(find rosbot_ekf)/launch/rosbot_ekf.launch"/>-->
         <node pkg="robot_localization" type="ekf_localization_node" name="rosbot_ekf" clear_params="true">
             <rosparam command="load" file="$(find rosbot_ekf)/params/ekf_params.yaml" />
             <param name="base_link_frame" value="$(arg robot_namespace)/base_link"/>
-            <param name="odom_frame" value="$(arg robot_namespace)/odom"/>
-            <param name="world_frame" value="$(arg robot_namespace)/odom"/>
+            <param name="odom_frame" value="odom"/>
+            <param name="world_frame" value="odom"/>
 
             <!--  Placeholder for output topic remapping -->
-            <remap from="odometry/filtered" to="/$(arg robot_namespace)/odom"/>
+            <remap from="odometry/filtered" to="odom"/>
             <!-- <remap from="accel/filtered" to=""/> -->
         </node>
         <node pkg="tf" type="static_transform_publisher" name="imu_publisher" args="0 0 0.02 0 0 0 $(arg robot_namespace)/base_link $(arg robot_namespace)/imu_link 100" />
